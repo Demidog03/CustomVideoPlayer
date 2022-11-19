@@ -139,16 +139,43 @@ picInPicBtn.addEventListener('click', () => {
     mainVideo.requestPictureInPicture()
 })
 
+//Keyboard buttons pressing events
+document.addEventListener('keydown', e => {
+    if(e.key === "Escape"){
+        console.log('pressed escape')
+        container.classList.remove('fullscreen')
+        fullscreenBtn.classList.replace("fa-compress", "fa-expand")
+        return document.exitFullscreen()
+    }
+    if(e.code === "Space"){
+        //if video paused, play the video. Else pause the video
+        mainVideo.paused ? mainVideo.play() : mainVideo.pause()
+    }
+
+})
+
 //changing video mode to fullscreen
 fullscreenBtn.addEventListener('click', () => {
     container.classList.toggle('fullscreen')
     if(document.fullscreenElement){ //if video is already in fullscreen mode
+
         fullscreenBtn.classList.replace("fa-compress", "fa-expand")
         return document.exitFullscreen()
     }
     fullscreenBtn.classList.replace("fa-expand", "fa-compress")
     container.requestFullscreen() //go to fullscreen mode
+
 })
+
+document.addEventListener('keydown', e => {
+    if(e.key === "Escape"){
+        console.log('pressed escape')
+        container.classList.remove('fullscreen')
+        fullscreenBtn.classList.replace("fa-compress", "fa-expand")
+        return document.exitFullscreen()
+    }
+})
+
 
 videoTimeLine.addEventListener('click', e => {
     let timelineWidth = e.target.clientWidth
@@ -165,17 +192,19 @@ videoTimeLine.addEventListener('mousemove', e => {
     progressTime.innerHTML = formatTime(percent)
 })
 
-container.addEventListener('mousedown', () => { //calling draggableProgressBar function on mousemove event
-    videoTimeLine.addEventListener('mousemove', draggableProgressBar)
+//modified event when clicking to videoTimeLine and dragging user can drag the whole screen
+
+videoTimeLine.addEventListener('mousedown', () => { //calling draggableProgressBar function on mousemove event
+    document.addEventListener('mousemove', draggableProgressBar)
 })
 
-container.addEventListener('mouseup', () => { //calling draggableProgressBar function on mousemove event
+document.addEventListener('mouseup', () => { //calling draggableProgressBar function on mousemove event
 
-    videoTimeLine.removeEventListener('mousemove', draggableProgressBar)
+    document.removeEventListener('mousemove', draggableProgressBar)
 })
 
 const draggableProgressBar = e => {
-
+    e.preventDefault()
     let timelineWidth = e.target.clientWidth
     progressBar.style.width = `${e.offsetX}px`
     //updating video current time according to video duration and mouse position
